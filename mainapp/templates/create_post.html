@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="mx-auto" style="max-width: 700px;">
+
+    <div class="unibuzz-card">
+        <div class="card-body p-4">
+
+            <h2 class="fw-bold text-center mb-4">Create Post</h2>
+
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Write something</label>
+                    <textarea name="content" class="form-control" rows="5" placeholder="What's on your mind?"></textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Upload Image</label>
+                    <input type="file" name="image" id="imageInput" class="form-control" accept="image/*">
+                </div>
+
+                <div class="form-check form-switch mb-4 mt-3">
+                    <input class="form-check-input" type="checkbox" role="switch" id="is_question" name="is_question">
+                    <label class="form-check-label fw-bold" for="is_question">❓ Ask as a Question</label>
+                    <div class="form-text">Mark this post as a question so you can select the best answer later.</div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Attach Document/File (Optional)</label>
+                    <input type="file" name="file_attachment" class="form-control">
+                </div>
+
+                {% if request.GET.group %}
+                    <input type="hidden" name="group_id" value="{{ request.GET.group }}">
+                {% else %}
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Post to Group (Optional)</label>
+                        <select name="group_id" class="form-select">
+                            <option value="">Global Feed</option>
+                            {% for group in groups %}
+                                {% if request.user in group.members.all %}
+                                    <option value="{{ group.id }}">{{ group.name }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                        <div class="form-text">If left empty, your post will appear in the main global feed.</div>
+                    </div>
+                {% endif %}
+
+                <!-- Image Preview -->
+                <div class="mb-4 d-none" id="previewContainer">
+                    <label class="form-label fw-semibold">Image Preview</label>
+                    <div class="border rounded-4 p-2 bg-light">
+                        <img id="imagePreview"
+                             src="#"
+                             alt="Preview"
+                             class="img-fluid rounded-4 w-100"
+                             style="max-height: 400px; object-fit: cover;">
+                    </div>
+                    <button type="button" id="removePreviewBtn" class="btn btn-outline-danger btn-sm rounded-pill mt-3">
+                        Remove Image
+                    </button>
+                </div>
+
+                <div class="d-flex justify-content-between">
+                    <a href="{% url 'home' %}" class="btn btn-unibuzz-outline rounded-pill px-4">
+                        Cancel
+                    </a>
+                    <button type="submit" class="btn btn-unibuzz-primary rounded-pill px-4">
+                        Post
+                    </button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+
+</div>
+
+<script>
+    const imageInput = document.getElementById('imageInput');
+    const previewContainer = document.getElementById('previewContainer');
+    const imagePreview = document.getElementById('imagePreview');
+    const removePreviewBtn = document.getElementById('removePreviewBtn');
+
+    imageInput.addEventListener('change', function () {
+        const file = this.files[0];
+
+        if (file) {
+            const reader = new FileReader();
+
+            reader.addEventListener('load', function () {
+                imagePreview.setAttribute('src', this.result);
+                previewContainer.classList.remove('d-none');
+            });
+
+            reader.readAsDataURL(file);
+        } else {
+            imagePreview.setAttribute('src', '#');
+            previewContainer.classList.add('d-none');
+        }
+    });
+
+    removePreviewBtn.addEventListener('click', function () {
+        imageInput.value = '';
+        imagePreview.setAttribute('src', '#');
+        previewContainer.classList.add('d-none');
+    });
+</script>
+
+{% endblock %}

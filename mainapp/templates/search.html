@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="mx-auto" style="max-width: 900px;">
+
+    <div class="card border-0 shadow-sm rounded-4 mb-4">
+        <div class="card-body p-4">
+            <h3 class="fw-bold mb-3">Search</h3>
+
+            <form method="GET" action="{% url 'search' %}">
+                <div class="input-group">
+                    <input type="text"
+                           name="query"
+                           class="form-control"
+                           placeholder="Search users or posts"
+                           value="{{ query }}">
+                    <button type="submit" class="btn btn-dark">Search</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {% if query %}
+        <!-- Users -->
+        <div class="card border-0 shadow-sm rounded-4 mb-4">
+            <div class="card-body p-4">
+                <h4 class="fw-bold mb-3">Users</h4>
+
+                {% if users %}
+                    {% for user_item in users %}
+                    <div class="d-flex justify-content-between align-items-center border rounded-3 p-3 mb-3">
+                        <div class="d-flex align-items-center">
+                            <img src="{{ user_item.profile.profile_image.url }}"
+                                 class="rounded-circle me-3"
+                                 width="50"
+                                 height="50"
+                                 style="object-fit: cover;">
+
+                            <div>
+                                <div class="fw-semibold">{{ user_item.username }}</div>
+                                <div class="text-muted small">
+                                    {{ user_item.profile.bio|default:"No bio added" }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <a href="{% url 'profile' user_item.username %}" class="btn btn-outline-dark rounded-pill px-3">
+                            View Profile
+                        </a>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-muted mb-0">No users found.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Posts -->
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-body p-4">
+                <h4 class="fw-bold mb-3">Posts</h4>
+
+                {% if posts %}
+                    {% for post in posts %}
+                    <div class="border rounded-3 p-3 mb-3">
+                        <div class="d-flex align-items-center mb-2">
+                            <img src="{{ post.user.profile.profile_image.url }}"
+                                 class="rounded-circle me-2"
+                                 width="42"
+                                 height="42"
+                                 style="object-fit: cover;">
+
+                            <div>
+                                <a href="{% url 'profile' post.user.username %}" class="text-decoration-none text-dark fw-semibold">
+                                    {{ post.user.username }}
+                                </a>
+                                <div class="text-muted small">
+                                    {{ post.created_at|date:"d M Y, h:i A" }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <p class="mb-0">{{ post.content }}</p>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-muted mb-0">No posts found.</p>
+                {% endif %}
+            </div>
+        </div>
+    {% else %}
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-body text-center py-5">
+                <h5 class="fw-bold">Start searching</h5>
+                <p class="text-muted mb-0">Search for usernames or post content.</p>
+            </div>
+        </div>
+    {% endif %}
+
+</div>
+
+{% endblock %}

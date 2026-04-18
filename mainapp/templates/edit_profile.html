@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="mx-auto" style="max-width: 700px;">
+
+    <div class="card border-0 shadow-sm rounded-4">
+        <div class="card-body p-4">
+
+            <h3 class="fw-bold mb-4 text-center">Edit Profile</h3>
+
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Username</label>
+                    {{ u_form.username }}
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Email</label>
+                    {{ u_form.email }}
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Bio</label>
+                    {{ p_form.bio }}
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Location</label>
+                    {{ p_form.location }}
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label fw-semibold">Profile Image</label>
+                    {{ p_form.profile_image }}
+                </div>
+
+                <div class="d-flex justify-content-between">
+                    <a href="{% url 'profile' request.user.username %}" class="btn btn-outline-secondary rounded-pill px-4">
+                        Cancel
+                    </a>
+                    <button type="submit" class="btn btn-dark rounded-pill px-4">
+                        Save Changes
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

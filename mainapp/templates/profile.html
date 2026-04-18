@@ -1,0 +1,212 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="mx-auto" style="max-width: 750px;">
+
+    <!-- Profile Card -->
+    <div class="unibuzz-card mb-4">
+        <div class="card-body text-center p-4">
+
+            <img src="{{ user_profile.profile.profile_image.url }}"
+                 class="rounded-circle mb-3"
+                 width="100"
+                 height="100"
+                 style="object-fit: cover;">
+
+            <h4 class="fw-bold mb-1">
+                {{ user_profile.username }}
+
+                {% if user_profile.is_superuser %}
+                    <span class="role-badge badge-admin ms-1">👑 Admin</span>
+                {% else %}
+                    {% for group in user_profile.groups.all %}
+                        {% if group.name == "Teacher" %}
+                            <span class="role-badge badge-teacher ms-1">📘 Teacher</span>
+                        {% elif group.name == "Staff" %}
+                            <span class="role-badge badge-admin ms-1">🛡️ Staff</span>
+                        {% elif group.name == "Student" %}
+                            <span class="role-badge badge-student ms-1">🎓 Student</span>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            </h4>
+
+            <p class="text-muted mb-1">
+                {{ user_profile.profile.bio|default:"No bio added" }}
+            </p>
+
+            <p class="text-muted small">
+                📍 {{ user_profile.profile.location|default:"No location" }}
+            </p>
+
+            <div class="d-flex justify-content-center gap-4 mt-3 mb-2 flex-wrap">
+                <div>
+                    <div class="fw-bold">{{ posts|length }}</div>
+                    <div class="text-muted small">Posts</div>
+                </div>
+                <div>
+                    <div class="fw-bold">{{ followers_count }}</div>
+                    <div class="text-muted small">Followers</div>
+                </div>
+                <div>
+                    <div class="fw-bold">{{ following_count }}</div>
+                    <div class="text-muted small">Following</div>
+                </div>
+            </div>
+
+            {% if request.user == user_profile %}
+                <a href="{% url 'edit_profile' %}" class="btn btn-unibuzz-outline rounded-pill px-4 mt-2">
+                    Edit Profile
+                </a>
+            {% else %}
+                <div class="d-flex justify-content-center gap-2 mt-2">
+                    <a href="{% url 'start_chat' user_profile.username %}" class="btn btn-unibuzz-outline rounded-pill px-4">
+                        ✉️ Message
+                    </a>
+                    <a href="{% url 'follow_unfollow' user_profile.username %}"
+                       class="btn {% if is_following %}btn-outline-danger{% else %}btn-unibuzz-primary{% endif %} rounded-pill px-4">
+                        {% if is_following %}
+                            Unfollow
+                        {% else %}
+                            Follow
+                        {% endif %}
+                    </a>
+                </div>
+            {% endif %}
+
+        </div>
+    </div>
+
+    <!-- Tabs for Posts / Saved -->
+    <ul class="nav nav-pills mb-4 justify-content-center" id="profileTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active rounded-pill fw-bold" id="posts-tab" data-bs-toggle="tab" data-bs-target="#posts-pane" type="button" role="tab">My Posts</button>
+        </li>
+        {% if request.user == user_profile %}
+        <li class="nav-item" role="presentation">
+            <button class="nav-link rounded-pill fw-bold" id="saved-tab" data-bs-toggle="tab" data-bs-target="#saved-pane" type="button" role="tab">Saved Posts</button>
+        </li>
+        {% endif %}
+    </ul>
+
+    <div class="tab-content" id="profileTabsContent">
+        <!-- User Posts Tab -->
+        <div class="tab-pane fade show active" id="posts-pane" role="tabpanel" tabindex="0">
+            {% if posts %}
+                {% for post in posts %}
+                <div class="unibuzz-card mb-4">
+                    <div class="card-body p-4">
+
+                <div class="d-flex justify-content-between align-items-start">
+                    <div class="text-muted small">
+                        {{ post.created_at|date:"d M Y, h:i A" }}
+                    </div>
+
+                    {% if request.user == post.user or can_moderate %}
+                    <div class="d-flex gap-2">
+                        <a href="{% url 'edit_post' post.id %}" class="btn btn-sm btn-outline-dark rounded-pill">
+                            Edit
+                        </a>
+
+                        <form method="POST" action="{% url 'delete_post' post.id %}" class="m-0">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill">
+                                Delete
+                            </button>
+                        </form>
+                    </div>
+                    {% endif %}
+                </div>
+
+                {% if post.content %}
+                <p class="mt-3 mb-3">{{ post.content }}</p>
+                {% endif %}
+
+                {% if post.image %}
+                <div class="mb-3">
+                    <img src="{{ post.image.url }}"
+                         alt="Post Image"
+                         class="img-fluid rounded-4 w-100"
+                         style="max-height: 500px; object-fit: cover;">
+                </div>
+                {% endif %}
+
+                {% if post.file_attachment %}
+                <div class="mb-3">
+                    <a href="{{ post.file_attachment.url }}" target="_blank" class="btn btn-sm btn-outline-info rounded-pill">
+                        📎 Download Attachment
+                    </a>
+                </div>
+                {% endif %}
+
+                <div class="d-flex gap-3 text-muted small mt-3">
+                    <span>❤️ {{ post.total_likes }} likes</span>
+                    <span>💬 {{ post.total_comments }} comments</span>
+                </div>
+
+            </div>
+        </div>
+        {% endfor %}
+            {% else %}
+                <div class="unibuzz-card">
+                    <div class="card-body text-center py-4">
+                        <p class="text-muted mb-0">No posts yet</p>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+        
+        <!-- Saved Posts Tab -->
+        {% if request.user == user_profile %}
+        <div class="tab-pane fade" id="saved-pane" role="tabpanel" tabindex="0">
+            {% if user_profile.profile.saved_posts.all %}
+                {% for post in user_profile.profile.saved_posts.all reversed %}
+                <div class="unibuzz-card mb-4">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div class="fw-bold">
+                                <a href="{% url 'profile' post.user.username %}" class="text-decoration-none" style="color: var(--text-main);">{{ post.user.username }}</a>
+                            </div>
+                            <div class="text-muted small">{{ post.created_at|date:"d M Y, h:i A" }}</div>
+                        </div>
+                        
+                        {% if post.content %}
+                            <p class="mb-3">{{ post.content }}</p>
+                        {% endif %}
+                        
+                        {% if post.image %}
+                            <img src="{{ post.image.url }}" class="img-fluid rounded-4 w-100 mb-3" style="max-height: 500px; object-fit: cover;">
+                        {% endif %}
+                        
+                        {% if post.file_attachment %}
+                        <div class="mb-3">
+                            <a href="{{ post.file_attachment.url }}" target="_blank" class="btn btn-sm btn-outline-info rounded-pill">
+                                📎 Download Attachment
+                            </a>
+                        </div>
+                        {% endif %}
+                        
+                        <div class="d-flex gap-2">
+                            <form method="POST" action="{% url 'toggle_bookmark' post.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-unibuzz-outline rounded-pill">Remove Bookmark</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="unibuzz-card">
+                    <div class="card-body text-center py-4">
+                        <p class="text-muted mb-0">No saved posts yet.</p>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+
+</div>
+
+{% endblock %}

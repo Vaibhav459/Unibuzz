@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="d-flex justify-content-center align-items-center" style="height: 80vh;">
+
+    <div class="text-center">
+
+        <h2 class="fw-bold mb-4">Welcome to UniBuzz</h2>
+
+        <div class="d-grid gap-3" style="width: 300px; margin: auto;">
+
+            <a href="{% url 'student_login' %}" class="btn btn-dark rounded-pill py-2">
+                Student Login
+            </a>
+
+            <a href="{% url 'register' %}" class="btn btn-outline-dark rounded-pill py-2">
+                Student Register
+            </a>
+
+            <a href="{% url 'teacher_login' %}" class="btn btn-secondary rounded-pill py-2">
+                Teacher Login
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

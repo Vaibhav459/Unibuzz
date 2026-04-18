@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="mx-auto" style="max-width: 600px;">
+    <h3 class="fw-bold mb-4">Inbox</h3>
+
+    {% if conversations %}
+        {% for conversation in conversations %}
+            {% for participant in conversation.participants.all %}
+                {% if participant != request.user %}
+                    <a href="{% url 'chat' participant.username %}" class="text-decoration-none text-dark">
+                        <div class="unibuzz-card mb-3 p-3 d-flex align-items-center">
+                            <img src="{{ participant.profile.profile_image.url }}" class="rounded-circle me-3" width="50" height="50" style="object-fit: cover;">
+                            <div class="flex-grow-1">
+                                <h6 class="fw-bold mb-0">{{ participant.username }}</h6>
+                                <small class="text-muted">
+                                    {% with last_message=conversation.messages.last %}
+                                        {% if last_message %}
+                                            {% if last_message.sender == request.user %}You: {% endif %}{{ last_message.content|truncatechars:30 }}
+                                        {% else %}
+                                            Start chatting...
+                                        {% endif %}
+                                    {% endwith %}
+                                </small>
+                            </div>
+                            <small class="text-muted">{{ conversation.updated_at|date:"M d" }}</small>
+                        </div>
+                    </a>
+                {% endif %}
+            {% endfor %}
+        {% endfor %}
+    {% else %}
+        <div class="unibuzz-card p-5 text-center">
+            <h5 class="text-muted">No messages yet</h5>
+            <p class="text-muted mb-0">Visit someone's profile to start a chat!</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

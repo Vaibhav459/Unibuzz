@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="mx-auto" style="max-width: 600px;">
+    <h3 class="fw-bold mb-4">Notifications</h3>
+
+    {% if notifications %}
+        {% for notification in notifications %}
+            <div class="unibuzz-card mb-3 p-3 {% if not notification.is_read %}border-start border-4 border-info bg-light{% endif %}">
+                <div class="d-flex align-items-center">
+                    <img src="{{ notification.sender.profile.profile_image.url }}" class="rounded-circle me-3" width="40" height="40" style="object-fit: cover;">
+                    <div class="flex-grow-1">
+                        {% if notification.notification_type == 'like' %}
+                            <a href="{% url 'profile' notification.sender.username %}" class="fw-bold text-dark text-decoration-none">{{ notification.sender.username }}</a> liked your post.
+                        {% elif notification.notification_type == 'comment' %}
+                            <a href="{% url 'profile' notification.sender.username %}" class="fw-bold text-dark text-decoration-none">{{ notification.sender.username }}</a> commented on your post.
+                        {% elif notification.notification_type == 'follow' %}
+                            <a href="{% url 'profile' notification.sender.username %}" class="fw-bold text-dark text-decoration-none">{{ notification.sender.username }}</a> started following you.
+                        {% elif notification.notification_type == 'message' %}
+                            <a href="{% url 'chat' notification.sender.username %}" class="fw-bold text-dark text-decoration-none">{{ notification.sender.username }}</a> sent you a message.
+                        {% elif notification.notification_type == 'accept' %}
+                            <a href="{% url 'profile' notification.sender.username %}" class="fw-bold text-dark text-decoration-none">{{ notification.sender.username }}</a> accepted your answer!
+                        {% endif %}
+                        <div class="text-muted small mt-1">{{ notification.created_at|timesince }} ago</div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="unibuzz-card p-5 text-center">
+            <h5 class="text-muted">You're all caught up!</h5>
+            <p class="text-muted mb-0">No new notifications.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
