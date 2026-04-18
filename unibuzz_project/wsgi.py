@@ -9,9 +9,21 @@ https://docs.djangoproject.com/en/6.0/howto/deployment/wsgi/
 
 import os
 
-from django.core.wsgi import get_wsgi_application
+import sys
+import traceback
+import os
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'unibuzz_project.settings')
 
-application = get_wsgi_application()
-app = application
+try:
+    from django.core.wsgi import get_wsgi_application
+    application = get_wsgi_application()
+    app = application
+except Exception as e:
+    # If Django fails to start, return the traceback to the browser
+    def application(environ, start_response):
+        status = '500 Internal Server Error'
+        headers = [('Content-type', 'text/plain')]
+        start_response(status, headers)
+        return [traceback.format_exc().encode('utf-8')]
+    app = application
