@@ -1,0 +1,26 @@
+databases:
+  - name: unibuzz-db
+    databaseName: unibuzz
+    user: unibuzz_user
+    plan: free
+
+services:
+  - type: web
+    name: unibuzz-web
+    env: python
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn unibuzz_project.wsgi:application"
+    plan: free
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: unibuzz-db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "False"
+      - key: ALLOWED_HOSTS
+        value: "unibuzz-web.onrender.com,*"
+      - key: CSRF_TRUSTED_ORIGINS
+        value: "https://unibuzz-web.onrender.com,https://*.onrender.com"
