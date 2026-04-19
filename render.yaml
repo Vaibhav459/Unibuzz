@@ -12,6 +12,8 @@ services:
     startCommand: "gunicorn unibuzz_project.wsgi:application"
     plan: free
     envVars:
+      - key: PYTHON_VERSION
+        value: "3.11.0"
       - key: DATABASE_URL
         fromDatabase:
           name: unibuzz-db
