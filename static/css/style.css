@@ -177,3 +177,81 @@ body {
 #theme-toggle:hover {
     transform: rotate(30deg);
 }
+
+/* Mobile Specific UI (Only for screens <= 768px) */
+@media (max-width: 768px) {
+    .container {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+    
+    .unibuzz-card {
+        border-radius: 15px;
+        margin-bottom: 15px;
+    }
+    
+    .card-body {
+        padding: 15px !important;
+    }
+    
+    .mobile-bottom-nav {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 65px;
+        background: var(--card-bg);
+        border-top: 1px solid var(--border-color);
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        z-index: 1050;
+        backdrop-filter: blur(10px);
+        padding-bottom: env(safe-area-inset-bottom);
+    }
+    
+    .mobile-nav-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-decoration: none;
+        color: var(--text-muted);
+        font-size: 0.7rem;
+        font-weight: 700;
+        transition: color 0.2s;
+    }
+    
+    .mobile-nav-item.active {
+        color: var(--accent-primary);
+    }
+    
+    .mobile-nav-icon {
+        font-size: 1.4rem;
+        margin-bottom: 2px;
+    }
+    
+    /* Adjust body padding for bottom nav */
+    body {
+        padding-bottom: 75px;
+    }
+    
+    /* Hide desktop elements */
+    .desktop-only {
+        display: none !important;
+    }
+    
+    /* Full width images on mobile */
+    .img-fluid {
+        border-radius: 12px !important;
+    }
+    
+    /* Simplify Top Nav */
+    .unibuzz-nav .navbar-brand {
+        font-size: 1.3rem;
+    }
+    
+    .unibuzz-nav .container {
+        justify-content: space-between;
+    }
+}
+

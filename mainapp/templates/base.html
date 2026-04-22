@@ -25,25 +25,28 @@
         <div class="collapse navbar-collapse" id="navbarContent">
 
             {% if user.is_authenticated %}
-                <form class="d-flex mx-auto w-50" method="GET" action="{% url 'search' %}">
+                <form class="d-flex mx-auto w-50 d-none d-lg-flex" method="GET" action="{% url 'search' %}">
                     <input class="form-control me-2" type="search" name="query" placeholder="Search users or posts">
                 </form>
 
                 <div class="d-flex align-items-center ms-auto gap-3">
-                    <a href="{% url 'groups_list' %}" class="btn btn-sm btn-light rounded-pill position-relative me-2" title="Groups">
-                        📚 Groups
-                    </a>
-                    <a href="{% url 'notifications' %}" class="btn btn-sm btn-light rounded-pill position-relative me-2" title="Notifications">
-                        🔔 
-                        {% if unread_notifications_count > 0 %}
-                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.65rem;">
-                                {{ unread_notifications_count }}
-                            </span>
-                        {% endif %}
-                    </a>
-                    <a href="{% url 'inbox' %}" class="btn btn-sm btn-light rounded-pill position-relative me-2" title="Inbox">
-                        💬 Inbox
-                    </a>
+                    <div class="d-none d-lg-flex align-items-center gap-3">
+                        <a href="{% url 'groups_list' %}" class="btn btn-sm btn-light rounded-pill position-relative me-2" title="Groups">
+                            📚 Groups
+                        </a>
+                        <a href="{% url 'notifications' %}" class="btn btn-sm btn-light rounded-pill position-relative me-2" title="Notifications">
+                            🔔 
+                            {% if unread_notifications_count > 0 %}
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.65rem;">
+                                    {{ unread_notifications_count }}
+                                </span>
+                            {% endif %}
+                        </a>
+                        <a href="{% url 'inbox' %}" class="btn btn-sm btn-light rounded-pill position-relative me-2" title="Inbox">
+                            💬 Inbox
+                        </a>
+                    </div>
+                    
                     <a href="{% url 'profile' request.user.username %}" class="text-decoration-none fw-bold" style="color: var(--text-main);">
                         {{ request.user.username }}
                     </a>
@@ -53,7 +56,7 @@
                 <div class="ms-auto d-flex gap-2 align-items-center">
                     <a href="{% url 'student_login' %}" class="btn btn-unibuzz-outline btn-sm">Student Login</a>
                     <a href="{% url 'register' %}" class="btn btn-unibuzz-primary btn-sm text-white">Student Register</a>
-                    <a href="{% url 'teacher_login' %}" class="btn btn-secondary btn-sm rounded-pill">Teacher Login</a>
+                    <a href="{% url 'teacher_login' %}" class="btn btn-secondary btn-sm rounded-pill d-none d-md-block">Teacher Login</a>
                 </div>
             {% endif %}
 
@@ -61,7 +64,38 @@
     </div>
 </nav>
 
+{% if user.is_authenticated %}
+<!-- Mobile Bottom Navigation -->
+<nav class="mobile-bottom-nav d-lg-none">
+    <a href="{% url 'home' %}" class="mobile-nav-item {% if request.resolver_match.url_name == 'home' %}active{% endif %}">
+        <span class="mobile-nav-icon">🏠</span>
+        <span>Home</span>
+    </a>
+    <a href="{% url 'search' %}" class="mobile-nav-item {% if request.resolver_match.url_name == 'search' %}active{% endif %}">
+        <span class="mobile-nav-icon">🔍</span>
+        <span>Search</span>
+    </a>
+    <a href="{% url 'create_post' %}" class="mobile-nav-item {% if request.resolver_match.url_name == 'create_post' %}active{% endif %}">
+        <span class="mobile-nav-icon">➕</span>
+        <span>Create</span>
+    </a>
+    <a href="{% url 'notifications' %}" class="mobile-nav-item {% if request.resolver_match.url_name == 'notifications' %}active{% endif %}">
+        <span class="mobile-nav-icon">🔔
+            {% if unread_notifications_count > 0 %}
+                <span class="badge rounded-pill bg-danger" style="font-size: 0.5rem; vertical-align: top; margin-left: -5px;">{{ unread_notifications_count }}</span>
+            {% endif %}
+        </span>
+        <span>Alerts</span>
+    </a>
+    <a href="{% url 'profile' request.user.username %}" class="mobile-nav-item {% if request.resolver_match.url_name == 'profile' %}active{% endif %}">
+        <span class="mobile-nav-icon">👤</span>
+        <span>Profile</span>
+    </a>
+</nav>
+{% endif %}
+
 <div class="container mt-4">
+
     {% if messages %}
         {% for message in messages %}
             <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
