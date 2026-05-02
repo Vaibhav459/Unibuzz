@@ -1,31 +1,50 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<div class="d-flex justify-content-center align-items-center py-4" style="min-height: 85vh;">
+    <div class="unibuzz-card p-0 shadow-lg border-0 overflow-hidden w-100" style="max-width: 900px; border-radius: 20px;">
+        <div class="row g-0" style="min-height: 500px;">
+            <!-- Left Brand Side -->
+            <div class="col-lg-5 d-none d-lg-flex flex-column justify-content-center position-relative text-white p-5" style="background: url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80') center/cover;">
+                <div class="position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(135deg, rgba(178, 143, 111, 0.9), rgba(212, 187, 165, 0.8));"></div>
+                <div class="position-relative z-1 text-center">
+                    <i class="fa-solid fa-graduation-cap mb-3" style="font-size: 3.5rem;"></i>
+                    <h1 class="fw-bold mb-3" style="letter-spacing: -1px; font-size: 2.8rem;">UniBuzz.</h1>
+                    <p class="fs-5 opacity-75 mb-0">Your academic world, connected.</p>
+                </div>
+            </div>
+            
+            <!-- Right Form Side -->
+            <div class="col-lg-7 d-flex flex-column justify-content-center align-items-center bg-white p-4 p-md-5">
+                <div style="max-width: 380px; width: 100%;">
+                    
+                    <div class="text-center mb-5">
+                        <h2 class="fw-bold text-dark mb-2">Welcome Back</h2>
+                        <p class="text-muted">Choose how you want to log in</p>
+                    </div>
 
-<div class="d-flex justify-content-center align-items-center" style="height: 80vh;">
+                    <div class="d-grid gap-3">
+                        <a href="{% url 'student_login' %}" class="btn btn-unibuzz-primary rounded-pill py-3 fw-bold fs-6">
+                            <i class="fa-solid fa-user-graduate me-2"></i> Student Login
+                        </a>
 
-    <div class="text-center">
+                        <a href="{% url 'register' %}" class="btn btn-unibuzz-outline rounded-pill py-3 fw-bold fs-6">
+                            <i class="fa-solid fa-user-plus me-2"></i> Create an Account
+                        </a>
 
-        <h2 class="fw-bold mb-4">Welcome to UniBuzz</h2>
+                        <div class="d-flex align-items-center my-3">
+                            <div class="flex-grow-1 border-bottom"></div>
+                            <span class="mx-3 text-muted small fw-semibold">STAFF & FACULTY</span>
+                            <div class="flex-grow-1 border-bottom"></div>
+                        </div>
 
-        <div class="d-grid gap-3" style="width: 300px; margin: auto;">
-
-            <a href="{% url 'student_login' %}" class="btn btn-dark rounded-pill py-2">
-                Student Login
-            </a>
-
-            <a href="{% url 'register' %}" class="btn btn-outline-dark rounded-pill py-2">
-                Student Register
-            </a>
-
-            <a href="{% url 'teacher_login' %}" class="btn btn-secondary rounded-pill py-2">
-                Teacher Login
-            </a>
-
+                        <a href="{% url 'teacher_login' %}" class="btn btn-light rounded-pill py-3 fw-bold fs-6 border" style="color: var(--text-main); transition: all 0.3s;">
+                            <i class="fa-solid fa-chalkboard-user me-2"></i> Teacher Login
+                        </a>
+                    </div>
+                </div>
+            </div>
         </div>
-
     </div>
-
 </div>
-
 {% endblock %}

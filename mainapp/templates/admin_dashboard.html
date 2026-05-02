@@ -5,35 +5,35 @@
     <div class="row mb-4">
         <div class="col-12 d-flex justify-content-between align-items-center">
             <div>
-                <h2 class="fw-bold mb-1">Admin Dashboard</h2>
+                <h2 class="fw-bold mb-1 text-dark">Admin Dashboard</h2>
                 <p class="text-muted mb-0">Manage UniBuzz Users</p>
             </div>
-            <a href="{% url 'moderation_panel' %}" class="btn btn-outline-dark rounded-pill px-4">
+            <a href="{% url 'moderation_panel' %}" class="btn btn-unibuzz-outline rounded-pill px-4 fw-bold">
                 Moderate Posts
             </a>
         </div>
     </div>
 
-    <div class="card shadow-sm border-0 rounded-4">
+    <div class="unibuzz-card p-0 overflow-hidden">
         <div class="card-body p-0">
             <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
-                    <thead class="table-light">
+                <table class="table align-middle mb-0" style="background: transparent;">
+                    <thead style="background: rgba(0,0,0,0.03);">
                         <tr>
-                            <th class="px-4 py-3 border-0">User</th>
-                            <th class="py-3 border-0">Email</th>
-                            <th class="py-3 border-0 text-center">Warnings</th>
-                            <th class="py-3 border-0 text-center">Status</th>
-                            <th class="px-4 py-3 border-0 text-end">Action</th>
+                            <th class="px-4 py-3 border-0 text-dark fw-bold">User</th>
+                            <th class="py-3 border-0 text-dark fw-bold">Email</th>
+                            <th class="py-3 border-0 text-center text-dark fw-bold">Warnings</th>
+                            <th class="py-3 border-0 text-center text-dark fw-bold">Status</th>
+                            <th class="px-4 py-3 border-0 text-end text-dark fw-bold">Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for u in users %}
                         <tr>
-                            <td class="px-4 py-3">
+                            <td class="px-4 py-3" style="background: transparent; border-bottom-color: rgba(0,0,0,0.05);">
                                 <div class="d-flex align-items-center">
                                     {% if u.profile %}
-                                        <img src="{{ u.profile.profile_image.url }}" class="rounded-circle me-3" width="40" height="40" style="object-fit: cover;">
+                                        <img src="{{ u.profile.profile_image.url }}" class="rounded-circle me-3" width="40" height="40" style="object-fit: cover;" onerror="this.outerHTML='<div class=\'rounded-circle bg-secondary me-3 d-flex align-items-center justify-content-center text-white fw-bold\' style=\'width: 40px; height: 40px;\'>{{ u.username|make_list|first|upper }}</div>'">
                                     {% else %}
                                         <div class="rounded-circle bg-secondary me-3 d-flex align-items-center justify-content-center text-white fw-bold" style="width: 40px; height: 40px;">
                                             {{ u.username|make_list|first|upper }}
@@ -44,10 +44,10 @@
                                     </a>
                                 </div>
                             </td>
-                            <td class="py-3 text-muted">
+                            <td class="py-3 text-muted" style="background: transparent; border-bottom-color: rgba(0,0,0,0.05);">
                                 {{ u.email|default:"-" }}
                             </td>
-                            <td class="py-3 text-center">
+                            <td class="py-3 text-center" style="background: transparent; border-bottom-color: rgba(0,0,0,0.05);">
                                 {% if u.profile.warning_count > 0 %}
                                     <span class="badge bg-warning text-dark px-3 py-2 rounded-pill">
                                         {{ u.profile.warning_count }} Warnings
@@ -56,22 +56,22 @@
                                     <span class="text-muted">0</span>
                                 {% endif %}
                             </td>
-                            <td class="py-3 text-center">
+                            <td class="py-3 text-center" style="background: transparent; border-bottom-color: rgba(0,0,0,0.05);">
                                 {% if u.is_active %}
                                     <span class="badge bg-success bg-opacity-10 text-success border border-success px-3 py-2 rounded-pill">Active</span>
                                 {% else %}
                                     <span class="badge bg-danger bg-opacity-10 text-danger border border-danger px-3 py-2 rounded-pill">Banned</span>
                                 {% endif %}
                             </td>
-                            <td class="px-4 py-3 text-end">
+                            <td class="px-4 py-3 text-end" style="background: transparent; border-bottom-color: rgba(0,0,0,0.05);">
                                 <form method="POST" action="{% url 'toggle_user_ban' u.id %}" class="m-0">
                                     {% csrf_token %}
                                     {% if u.is_active %}
-                                        <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill px-3" onclick="return confirm('Are you sure you want to ban {{ u.username }}?')">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill px-3 fw-bold" onclick="return confirm('Are you sure you want to ban {{ u.username }}?')">
                                             Ban User
                                         </button>
                                     {% else %}
-                                        <button type="submit" class="btn btn-sm btn-outline-success rounded-pill px-3" onclick="return confirm('Are you sure you want to unban {{ u.username }}?')">
+                                        <button type="submit" class="btn btn-sm btn-outline-success rounded-pill px-3 fw-bold" onclick="return confirm('Are you sure you want to unban {{ u.username }}?')">
                                             Unban User
                                         </button>
                                     {% endif %}

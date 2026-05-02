@@ -1,59 +1,90 @@
 {% extends 'base.html' %}
 
 {% block content %}
-
-<div class="d-flex justify-content-center align-items-center" style="min-height: 80vh;">
-    <div class="card border-0 shadow-lg rounded-4 p-4" style="max-width: 500px; width: 100%;">
-        <div class="text-center mb-4">
-            <h2 class="fw-bold mb-1">Student Register</h2>
-            <p class="text-muted mb-0">Create your UniBuzz student account</p>
-        </div>
-
-        <form method="POST">
-            {% csrf_token %}
-
-            <div class="mb-3">
-                <label class="form-label fw-semibold">Username</label>
-                <input type="text" name="username" class="form-control form-control-lg rounded-3" placeholder="Enter username" required>
-                {% if form.username.errors %}
-                    <div class="text-danger small mt-1">{{ form.username.errors|join:", " }}</div>
-                {% endif %}
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label fw-semibold">Password</label>
-                <input type="password" name="password1" class="form-control form-control-lg rounded-3" placeholder="Enter password" required>
-                {% if form.password1.errors %}
-                    <div class="text-danger small mt-1">{{ form.password1.errors|join:", " }}</div>
-                {% endif %}
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label fw-semibold">Confirm Password</label>
-                <input type="password" name="password2" class="form-control form-control-lg rounded-3" placeholder="Confirm password" required>
-                {% if form.password2.errors %}
-                    <div class="text-danger small mt-1">{{ form.password2.errors|join:", " }}</div>
-                {% endif %}
-            </div>
-
-            {% if form.non_field_errors %}
-                <div class="alert alert-danger rounded-3">
-                    {{ form.non_field_errors }}
+<div class="d-flex justify-content-center align-items-center py-4" style="min-height: 85vh;">
+    <div class="unibuzz-card p-0 shadow-lg border-0 overflow-hidden w-100" style="max-width: 950px; border-radius: 20px;">
+        <div class="row g-0" style="min-height: 550px;">
+            
+            <!-- Left Brand Side -->
+            <div class="col-lg-5 d-none d-lg-flex flex-column justify-content-center position-relative text-white p-5" style="background: url('https://images.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80') center/cover;">
+                <div class="position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(135deg, rgba(178, 143, 111, 0.9), rgba(212, 187, 165, 0.8));"></div>
+                <div class="position-relative z-1 text-center">
+                    <i class="fa-solid fa-user-plus mb-3" style="font-size: 3.5rem;"></i>
+                    <h2 class="fw-bold mb-3" style="letter-spacing: -0.5px;">Join UniBuzz</h2>
+                    <p class="opacity-75 mb-0">Create your account and start connecting with your campus community today.</p>
                 </div>
-            {% endif %}
+            </div>
+            
+            <!-- Right Form Side -->
+            <div class="col-lg-7 d-flex flex-column justify-content-center align-items-center bg-white p-4 p-md-5">
+                <div style="max-width: 400px; width: 100%;">
+                    
+                    <div class="text-center mb-4">
+                        <h3 class="fw-bold text-dark mb-1">Create Account</h3>
+                        <p class="text-muted">Fill in your details to get started</p>
+                    </div>
 
-            <button type="submit" class="btn btn-dark w-100 rounded-pill py-2 fw-semibold">
-                Create Student Account
-            </button>
-        </form>
+                    <form method="POST">
+                        {% csrf_token %}
 
-        <div class="text-center mt-4">
-            <p class="mb-2 text-muted">Already have an account?</p>
-            <a href="{% url 'student_login' %}" class="btn btn-outline-dark rounded-pill px-4">
-                Student Login
-            </a>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold small text-muted mb-1">Username</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-transparent border-end-0 text-muted px-3" style="border-radius: 12px 0 0 12px;">
+                                    <i class="fa-solid fa-at"></i>
+                                </span>
+                                <input type="text" name="username" class="form-control border-start-0 shadow-none py-2" style="border-radius: 0 12px 12px 0;" placeholder="Choose a username" required>
+                            </div>
+                            {% if form.username.errors %}
+                                <div class="text-danger small mt-1"><i class="fa-solid fa-circle-exclamation"></i> {{ form.username.errors|join:", " }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold small text-muted mb-1">Password</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-transparent border-end-0 text-muted px-3" style="border-radius: 12px 0 0 12px;">
+                                    <i class="fa-solid fa-lock"></i>
+                                </span>
+                                <input type="password" name="password1" class="form-control border-start-0 shadow-none py-2" style="border-radius: 0 12px 12px 0;" placeholder="Create a password" required>
+                            </div>
+                            {% if form.password1.errors %}
+                                <div class="text-danger small mt-1"><i class="fa-solid fa-circle-exclamation"></i> {{ form.password1.errors|join:", " }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold small text-muted mb-1">Confirm Password</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-transparent border-end-0 text-muted px-3" style="border-radius: 12px 0 0 12px;">
+                                    <i class="fa-solid fa-shield-check"></i>
+                                </span>
+                                <input type="password" name="password2" class="form-control border-start-0 shadow-none py-2" style="border-radius: 0 12px 12px 0;" placeholder="Repeat password" required>
+                            </div>
+                            {% if form.password2.errors %}
+                                <div class="text-danger small mt-1"><i class="fa-solid fa-circle-exclamation"></i> {{ form.password2.errors|join:", " }}</div>
+                            {% endif %}
+                        </div>
+
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger rounded-3 border-0 bg-danger bg-opacity-10 text-danger small py-2 mb-4">
+                                <i class="fa-solid fa-circle-exclamation"></i> {{ form.non_field_errors }}
+                            </div>
+                        {% endif %}
+
+                        <button type="submit" class="btn btn-unibuzz-primary w-100 rounded-pill py-2 fw-bold fs-6 mb-3">
+                            Sign Up
+                        </button>
+                    </form>
+
+                    <div class="text-center mt-2">
+                        <p class="text-muted small">Already have an account? <a href="{% url 'student_login' %}" class="fw-bold text-decoration-none">Log in</a></p>
+                    </div>
+
+                </div>
+            </div>
+            
         </div>
     </div>
 </div>
-
 {% endblock %}

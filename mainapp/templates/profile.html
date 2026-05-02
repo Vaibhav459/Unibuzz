@@ -2,70 +2,79 @@
 
 {% block content %}
 
-<div class="mx-auto" style="max-width: 750px;">
+<div class="mx-auto pb-5" style="max-width: 750px;">
 
-    <!-- Profile Card -->
-    <div class="unibuzz-card mb-4">
-        <div class="card-body text-center p-4">
+    <!-- Profile Header -->
+    <div class="unibuzz-card mb-4 border-0">
+        <div class="profile-cover"></div>
+        
+        <div class="card-body text-center px-4 pb-4 pt-0">
+            {% if user_profile.profile.profile_image %}
+                <img src="{{ user_profile.profile.profile_image.url }}" class="profile-avatar border border-2 border-secondary">
+            {% else %}
+                <div class="profile-avatar d-flex align-items-center justify-content-center text-muted" style="font-size: 4rem;">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+            {% endif %}
 
-            <img src="{{ user_profile.profile.profile_image.url }}"
-                 class="rounded-circle mb-3"
-                 width="100"
-                 height="100"
-                 style="object-fit: cover;">
-
-            <h4 class="fw-bold mb-1">
+            <h3 class="fw-bold mb-1 mt-3 text-dark">
                 {{ user_profile.username }}
-
+            </h3>
+            
+            <div class="mb-3">
                 {% if user_profile.is_superuser %}
-                    <span class="role-badge badge-admin ms-1">👑 Admin</span>
+                    <span class="role-badge badge-admin"><i class="fa-solid fa-crown me-1"></i> Admin</span>
                 {% else %}
                     {% for group in user_profile.groups.all %}
                         {% if group.name == "Teacher" %}
-                            <span class="role-badge badge-teacher ms-1">📘 Teacher</span>
+                            <span class="role-badge badge-teacher"><i class="fa-solid fa-chalkboard-user me-1"></i> Teacher</span>
                         {% elif group.name == "Staff" %}
-                            <span class="role-badge badge-admin ms-1">🛡️ Staff</span>
+                            <span class="role-badge badge-admin">Staff</span>
                         {% elif group.name == "Student" %}
-                            <span class="role-badge badge-student ms-1">🎓 Student</span>
+                            <span class="role-badge badge-student"><i class="fa-solid fa-user-graduate me-1"></i> Student</span>
                         {% endif %}
                     {% endfor %}
                 {% endif %}
-            </h4>
+            </div>
 
-            <p class="text-muted mb-1">
-                {{ user_profile.profile.bio|default:"No bio added" }}
+            {% if user_profile.profile.bio %}
+            <p class="text-dark mb-2" style="font-size: 0.95rem;">
+                {{ user_profile.profile.bio }}
+            </p>
+            {% endif %}
+
+            <p class="text-muted small mb-4">
+                <i class="fa-solid fa-location-dot me-1"></i> {{ user_profile.profile.location|default:"Somewhere on Earth" }}
+                <span class="mx-2">•</span>
+                <i class="fa-regular fa-calendar me-1"></i> Joined {{ user_profile.date_joined|date:"F Y" }}
             </p>
 
-            <p class="text-muted small">
-                📍 {{ user_profile.profile.location|default:"No location" }}
-            </p>
-
-            <div class="d-flex justify-content-center gap-4 mt-3 mb-2 flex-wrap">
-                <div>
-                    <div class="fw-bold">{{ posts|length }}</div>
-                    <div class="text-muted small">Posts</div>
+            <div class="d-flex justify-content-center gap-4 mb-4 pb-4 border-bottom border-secondary border-opacity-25">
+                <div class="text-center px-3">
+                    <div class="fw-bold text-dark fs-5">{{ posts|length }}</div>
+                    <div class="text-muted small text-uppercase" style="letter-spacing: 1px;">Posts</div>
                 </div>
-                <div>
-                    <div class="fw-bold">{{ followers_count }}</div>
-                    <div class="text-muted small">Followers</div>
+                <div class="text-center px-3">
+                    <div class="fw-bold text-dark fs-5">{{ followers_count }}</div>
+                    <div class="text-muted small text-uppercase" style="letter-spacing: 1px;">Followers</div>
                 </div>
-                <div>
-                    <div class="fw-bold">{{ following_count }}</div>
-                    <div class="text-muted small">Following</div>
+                <div class="text-center px-3">
+                    <div class="fw-bold text-dark fs-5">{{ following_count }}</div>
+                    <div class="text-muted small text-uppercase" style="letter-spacing: 1px;">Following</div>
                 </div>
             </div>
 
             {% if request.user == user_profile %}
-                <a href="{% url 'edit_profile' %}" class="btn btn-unibuzz-outline rounded-pill px-4 mt-2">
+                <a href="{% url 'edit_profile' %}" class="btn btn-unibuzz-outline rounded-pill px-4 fw-bold">
                     Edit Profile
                 </a>
             {% else %}
-                <div class="d-flex justify-content-center gap-2 mt-2">
-                    <a href="{% url 'start_chat' user_profile.username %}" class="btn btn-unibuzz-outline rounded-pill px-4">
-                        ✉️ Message
+                <div class="d-flex justify-content-center gap-3">
+                    <a href="{% url 'start_chat' user_profile.username %}" class="btn btn-unibuzz-outline rounded-pill px-4 nav-icon-btn d-flex align-items-center justify-content-center" style="width: auto;" title="Message">
+                        <i class="fa-regular fa-envelope me-2"></i> Message
                     </a>
                     <a href="{% url 'follow_unfollow' user_profile.username %}"
-                       class="btn {% if is_following %}btn-outline-danger{% else %}btn-unibuzz-primary{% endif %} rounded-pill px-4">
+                       class="btn {% if is_following %}btn-outline-danger{% else %}btn-unibuzz-primary{% endif %} rounded-pill px-5 fw-bold follow-btn">
                         {% if is_following %}
                             Unfollow
                         {% else %}
@@ -79,13 +88,13 @@
     </div>
 
     <!-- Tabs for Posts / Saved -->
-    <ul class="nav nav-pills mb-4 justify-content-center" id="profileTabs" role="tablist">
+    <ul class="nav nav-pills mb-4 justify-content-center p-1 rounded-pill" id="profileTabs" role="tablist" style="background: rgba(255,255,255,0.05); display: inline-flex; position: relative; left: 50%; transform: translateX(-50%);">
         <li class="nav-item" role="presentation">
-            <button class="nav-link active rounded-pill fw-bold" id="posts-tab" data-bs-toggle="tab" data-bs-target="#posts-pane" type="button" role="tab">My Posts</button>
+            <button class="nav-link active rounded-pill fw-bold" id="posts-tab" data-bs-toggle="tab" data-bs-target="#posts-pane" type="button" role="tab">Posts</button>
         </li>
         {% if request.user == user_profile %}
         <li class="nav-item" role="presentation">
-            <button class="nav-link rounded-pill fw-bold" id="saved-tab" data-bs-toggle="tab" data-bs-target="#saved-pane" type="button" role="tab">Saved Posts</button>
+            <button class="nav-link rounded-pill fw-bold" id="saved-tab" data-bs-toggle="tab" data-bs-target="#saved-pane" type="button" role="tab">Saved</button>
         </li>
         {% endif %}
     </ul>
@@ -95,64 +104,69 @@
         <div class="tab-pane fade show active" id="posts-pane" role="tabpanel" tabindex="0">
             {% if posts %}
                 {% for post in posts %}
-                <div class="unibuzz-card mb-4">
+                <div class="unibuzz-card mb-4 border-0">
                     <div class="card-body p-4">
 
-                <div class="d-flex justify-content-between align-items-start">
-                    <div class="text-muted small">
-                        {{ post.created_at|date:"d M Y, h:i A" }}
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div class="text-muted small">
+                                <i class="fa-regular fa-clock me-1"></i> {{ post.created_at|date:"M d, Y" }}
+                            </div>
+
+                            {% if request.user == post.user or can_moderate %}
+                            <div class="dropdown">
+                                <button class="btn btn-sm text-muted nav-icon-btn" data-bs-toggle="dropdown">
+                                    <i class="fa-solid fa-ellipsis"></i>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end shadow-sm" style="background: var(--card-solid); border-color: var(--border-color);">
+                                    <li><a class="dropdown-item text-dark" href="{% url 'edit_post' post.id %}"><i class="fa-solid fa-pen me-2"></i> Edit</a></li>
+                                    <li>
+                                        <form method="POST" action="{% url 'delete_post' post.id %}" class="m-0">
+                                            {% csrf_token %}
+                                            <button type="submit" class="dropdown-item text-danger"><i class="fa-solid fa-trash me-2"></i> Delete</button>
+                                        </form>
+                                    </li>
+                                </ul>
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        {% if post.content %}
+                        <p class="mb-3 text-dark" style="line-height: 1.6; white-space: pre-wrap;">{{ post.content }}</p>
+                        {% endif %}
+
+                        {% if post.image %}
+                        <div class="mb-3">
+                            <img src="{{ post.image.url }}"
+                                 alt="Post Image"
+                                 class="img-fluid rounded-4 w-100 border border-secondary border-opacity-25"
+                                 style="max-height: 500px; object-fit: cover;">
+                        </div>
+                        {% endif %}
+
+                        {% if post.file_attachment %}
+                        <div class="mb-3">
+                            <a href="{{ post.file_attachment.url }}" target="_blank" class="btn btn-sm btn-unibuzz-outline rounded-pill text-info border-info">
+                                <i class="fa-solid fa-paperclip me-1"></i> Download Attachment
+                            </a>
+                        </div>
+                        {% endif %}
+
+                        <div class="d-flex gap-4 text-muted mt-3 pt-3 border-top border-secondary border-opacity-25">
+                            <div class="d-flex align-items-center gap-2">
+                                <i class="fa-solid fa-heart text-danger"></i> <span>{{ post.total_likes }}</span>
+                            </div>
+                            <div class="d-flex align-items-center gap-2">
+                                <i class="fa-regular fa-comment"></i> <span>{{ post.total_comments }}</span>
+                            </div>
+                        </div>
+
                     </div>
-
-                    {% if request.user == post.user or can_moderate %}
-                    <div class="d-flex gap-2">
-                        <a href="{% url 'edit_post' post.id %}" class="btn btn-sm btn-outline-dark rounded-pill">
-                            Edit
-                        </a>
-
-                        <form method="POST" action="{% url 'delete_post' post.id %}" class="m-0">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill">
-                                Delete
-                            </button>
-                        </form>
-                    </div>
-                    {% endif %}
                 </div>
-
-                {% if post.content %}
-                <p class="mt-3 mb-3">{{ post.content }}</p>
-                {% endif %}
-
-                {% if post.image %}
-                <div class="mb-3">
-                    <img src="{{ post.image.url }}"
-                         alt="Post Image"
-                         class="img-fluid rounded-4 w-100"
-                         style="max-height: 500px; object-fit: cover;">
-                </div>
-                {% endif %}
-
-                {% if post.file_attachment %}
-                <div class="mb-3">
-                    <a href="{{ post.file_attachment.url }}" target="_blank" class="btn btn-sm btn-outline-info rounded-pill">
-                        📎 Download Attachment
-                    </a>
-                </div>
-                {% endif %}
-
-                <div class="d-flex gap-3 text-muted small mt-3">
-                    <span>❤️ {{ post.total_likes }} likes</span>
-                    <span>💬 {{ post.total_comments }} comments</span>
-                </div>
-
-            </div>
-        </div>
-        {% endfor %}
+                {% endfor %}
             {% else %}
-                <div class="unibuzz-card">
-                    <div class="card-body text-center py-4">
-                        <p class="text-muted mb-0">No posts yet</p>
-                    </div>
+                <div class="unibuzz-card text-center py-5 border-0">
+                    <i class="fa-solid fa-pen-nib text-muted mb-3" style="font-size: 3rem;"></i>
+                    <p class="text-muted mb-0">No posts yet.</p>
                 </div>
             {% endif %}
         </div>
@@ -162,45 +176,56 @@
         <div class="tab-pane fade" id="saved-pane" role="tabpanel" tabindex="0">
             {% if user_profile.profile.saved_posts.all %}
                 {% for post in user_profile.profile.saved_posts.all reversed %}
-                <div class="unibuzz-card mb-4">
+                <div class="unibuzz-card mb-4 border-0">
                     <div class="card-body p-4">
-                        <div class="d-flex justify-content-between align-items-start mb-2">
-                            <div class="fw-bold">
-                                <a href="{% url 'profile' post.user.username %}" class="text-decoration-none" style="color: var(--text-main);">{{ post.user.username }}</a>
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div class="d-flex align-items-center gap-2">
+                                <a href="{% url 'profile' post.user.username %}" class="text-decoration-none fw-bold hover-text-primary" style="color: var(--text-main); font-size: 1.1rem;">
+                                    {{ post.user.username }}
+                                </a>
+                                <span class="text-muted mx-1">•</span>
+                                <div class="text-muted small">{{ post.created_at|date:"M d, Y" }}</div>
                             </div>
-                            <div class="text-muted small">{{ post.created_at|date:"d M Y, h:i A" }}</div>
+                            
+                            <form method="POST" action="{% url 'toggle_bookmark' post.id %}" class="bookmark-form">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm text-primary nav-icon-btn" title="Remove Bookmark">
+                                    <i class="fa-solid fa-bookmark"></i>
+                                </button>
+                            </form>
                         </div>
                         
                         {% if post.content %}
-                            <p class="mb-3">{{ post.content }}</p>
+                            <p class="mb-3 text-dark" style="line-height: 1.6; white-space: pre-wrap;">{{ post.content }}</p>
                         {% endif %}
                         
                         {% if post.image %}
-                            <img src="{{ post.image.url }}" class="img-fluid rounded-4 w-100 mb-3" style="max-height: 500px; object-fit: cover;">
+                            <img src="{{ post.image.url }}" class="img-fluid rounded-4 w-100 border border-secondary border-opacity-25 mb-3" style="max-height: 500px; object-fit: cover;">
                         {% endif %}
                         
                         {% if post.file_attachment %}
                         <div class="mb-3">
-                            <a href="{{ post.file_attachment.url }}" target="_blank" class="btn btn-sm btn-outline-info rounded-pill">
-                                📎 Download Attachment
+                            <a href="{{ post.file_attachment.url }}" target="_blank" class="btn btn-sm btn-unibuzz-outline rounded-pill text-info border-info">
+                                <i class="fa-solid fa-paperclip me-1"></i> Download Attachment
                             </a>
                         </div>
                         {% endif %}
                         
-                        <div class="d-flex gap-2">
-                            <form method="POST" action="{% url 'toggle_bookmark' post.id %}">
-                                {% csrf_token %}
-                                <button type="submit" class="btn btn-sm btn-unibuzz-outline rounded-pill">Remove Bookmark</button>
-                            </form>
+                        <div class="d-flex gap-4 text-muted mt-3 pt-3 border-top border-secondary border-opacity-25">
+                            <div class="d-flex align-items-center gap-2">
+                                <i class="fa-solid fa-heart text-danger"></i> <span>{{ post.total_likes }}</span>
+                            </div>
+                            <div class="d-flex align-items-center gap-2">
+                                <i class="fa-regular fa-comment"></i> <span>{{ post.total_comments }}</span>
+                            </div>
                         </div>
                     </div>
                 </div>
                 {% endfor %}
             {% else %}
-                <div class="unibuzz-card">
-                    <div class="card-body text-center py-4">
-                        <p class="text-muted mb-0">No saved posts yet.</p>
-                    </div>
+                <div class="unibuzz-card text-center py-5 border-0">
+                    <i class="fa-regular fa-bookmark text-muted mb-3" style="font-size: 3rem;"></i>
+                    <p class="text-muted mb-0">No saved posts yet.</p>
                 </div>
             {% endif %}
         </div>
@@ -208,5 +233,9 @@
     </div>
 
 </div>
+
+<style>
+    .hover-text-primary:hover { color: var(--accent-primary) !important; }
+</style>
 
 {% endblock %}

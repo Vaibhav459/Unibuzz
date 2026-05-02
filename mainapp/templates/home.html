@@ -2,249 +2,218 @@
 
 {% block content %}
 
-<div class="container-fluid">
-    <div class="row">
-
-        <!-- LEFT SIDEBAR -->
-        <div class="col-md-3 d-none d-md-block">
-            <div class="unibuzz-card p-3">
-                <h5 class="fw-bold mb-3">Menu</h5>
-
-                <div class="d-grid gap-2">
-                    <a href="{% url 'home' %}" class="btn btn-light text-start">🏠 Home</a>
-                    <a href="{% url 'profile' request.user.username %}" class="btn btn-light text-start">👤 Profile</a>
-                    <a href="{% url 'create_post' %}" class="btn btn-light text-start">➕ Create Post</a>
-                    <a href="{% url 'search' %}" class="btn btn-light text-start">🔍 Search</a>
-
-                    {% if can_moderate %}
-                    <a href="{% url 'moderation_panel' %}" class="btn btn-warning text-dark text-start fw-semibold">
-                        🛠 Moderation Panel
-                    </a>
-                    {% endif %}
-                    {% if is_admin %}
-                    <a href="{% url 'admin_dashboard' %}" class="btn btn-danger text-white text-start fw-semibold mt-2">
-                        🛡️ Admin Dashboard
-                    </a>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
+<div class="container-fluid py-3">
+    <div class="row g-5">
 
         <!-- MAIN FEED -->
-        <div class="col-md-6">
+        <div class="col-lg-8 col-xl-7">
 
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h4 class="fw-bold mb-0">
                     Feed
                     {% if current_tag %}
-                        <span class="text-muted fs-6"> > #{{ current_tag }}</span>
-                        <a href="{% url 'home' %}" class="text-danger text-decoration-none ms-2 fs-6">✖ Clear</a>
+                        <span class="text-primary fs-5 ms-2">#{{ current_tag }}</span>
+                        <a href="{% url 'home' %}" class="text-danger text-decoration-none ms-2 fs-6"><i class="fa-solid fa-circle-xmark"></i></a>
                     {% endif %}
                 </h4>
-                <a href="{% url 'create_post' %}" class="btn btn-unibuzz-primary rounded-pill px-4">
-                    + Create Post
+                <a href="{% url 'create_post' %}" class="btn btn-unibuzz-primary rounded-pill px-4 d-md-none">
+                    <i class="fa-solid fa-plus"></i> Post
                 </a>
             </div>
 
             {% if posts %}
                 {% for post in posts %}
-                <div class="unibuzz-card mb-4">
+                <div class="unibuzz-card mb-4 border-0">
                     <div class="card-body p-4">
 
-                        <div class="d-flex justify-content-between align-items-start">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
 
                             <div class="d-flex align-items-center">
-                                <img src="{{ post.user.profile.profile_image.url }}"
-                                     class="rounded-circle me-3"
-                                     width="48"
-                                     height="48"
-                                     style="object-fit: cover;">
+                                <a href="{% url 'profile' post.user.username %}">
+                                    {% if post.user.profile.profile_image %}
+                                        <img src="{{ post.user.profile.profile_image.url }}" class="rounded-circle me-3 border border-secondary" width="50" height="50" style="object-fit: cover;" onerror="this.outerHTML='<div class=\'rounded-circle bg-secondary bg-opacity-25 me-3 d-flex align-items-center justify-content-center\' style=\'width: 50px; height: 50px;\'><i class=\'fa-solid fa-user text-secondary\'></i></div>'">
+                                    {% else %}
+                                        <div class="rounded-circle bg-secondary bg-opacity-25 me-3 d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                            <i class="fa-solid fa-user text-secondary"></i>
+                                        </div>
+                                    {% endif %}
+                                </a>
 
                                 <div>
-                                    <a href="{% url 'profile' post.user.username %}" class="text-decoration-none text-dark fw-semibold">
-                                        {{ post.user.username }}
-                                    </a>
-
-                                    {% if post.user.is_superuser %}
-                                        <span class="role-badge badge-admin ms-1">👑 Admin</span>
-                                    {% else %}
-                                        {% for group in post.user.groups.all %}
-                                            {% if group.name == "Teacher" %}
-                                                <span class="role-badge badge-teacher ms-1">📘 Teacher</span>
-                                            {% elif group.name == "Staff" %}
-                                                <span class="role-badge badge-admin ms-1">🛡️ Staff</span>
-                                            {% elif group.name == "Student" %}
-                                                <span class="role-badge badge-student ms-1">🎓 Student</span>
-                                            {% endif %}
-                                        {% endfor %}
-                                    {% endif %}
+                                    <div class="d-flex align-items-center gap-2">
+                                        <a href="{% url 'profile' post.user.username %}" class="text-decoration-none fw-bold" style="color: var(--text-main); font-size: 1.1rem;">
+                                            {{ post.user.username }}
+                                        </a>
+                                        
+                                        {% if post.user.is_superuser %}
+                                            <span class="role-badge badge-admin"><i class="fa-solid fa-crown me-1"></i> Admin</span>
+                                        {% else %}
+                                            {% for group in post.user.groups.all %}
+                                                {% if group.name == "Teacher" %}
+                                                    <span class="role-badge badge-teacher"><i class="fa-solid fa-chalkboard-user me-1"></i> Teacher</span>
+                                                {% elif group.name == "Staff" %}
+                                                    <span class="role-badge badge-admin"><i class="fa-solid fa-shield me-1"></i> Staff</span>
+                                                {% elif group.name == "Student" %}
+                                                    <span class="role-badge badge-student"><i class="fa-solid fa-user-graduate me-1"></i> Student</span>
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% endif %}
+                                    </div>
 
                                     <div class="text-muted small mt-1">
-                                        {{ post.created_at|date:"d M Y, h:i A" }}
+                                        <i class="fa-regular fa-clock me-1"></i> {{ post.created_at|date:"M d, h:i A" }}
                                     </div>
                                 </div>
                             </div>
 
                             <div class="d-flex gap-2 align-items-center">
-                                <form method="POST" action="{% url 'toggle_bookmark' post.id %}">
+                                <form method="POST" action="{% url 'toggle_bookmark' post.id %}" class="bookmark-form">
                                     {% csrf_token %}
-                                    <button type="submit" class="btn btn-sm btn-light border rounded-circle" title="Bookmark">
-                                        {% if post in request.user.profile.saved_posts.all %} 📌 {% else %} 📍 {% endif %}
+                                    <button type="submit" class="btn btn-sm text-muted nav-icon-btn" title="Bookmark">
+                                        {% if post in request.user.profile.saved_posts.all %} 
+                                            <i class="fa-solid fa-bookmark text-primary"></i>
+                                        {% else %} 
+                                            <i class="fa-regular fa-bookmark"></i>
+                                        {% endif %}
                                     </button>
                                 </form>
 
                                 {% if request.user == post.user or can_moderate %}
-                                <a href="{% url 'edit_post' post.id %}" class="btn btn-sm btn-unibuzz-outline rounded-pill">
-                                    Edit
-                                </a>
-
-                                <button type="button"
-                                        class="btn btn-sm btn-outline-danger rounded-pill"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#deleteModal{{ post.id }}">
-                                    Delete
-                                </button>
+                                <div class="dropdown">
+                                    <button class="btn btn-sm text-muted nav-icon-btn" data-bs-toggle="dropdown">
+                                        <i class="fa-solid fa-ellipsis"></i>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end shadow-sm" style="background: var(--card-solid); border-color: var(--border-color);">
+                                        <li><a class="dropdown-item text-dark" href="{% url 'edit_post' post.id %}"><i class="fa-solid fa-pen me-2"></i> Edit</a></li>
+                                        <li><button type="button" class="dropdown-item text-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ post.id }}"><i class="fa-solid fa-trash me-2"></i> Delete</button></li>
+                                    </ul>
+                                </div>
                                 {% endif %}
                             </div>
 
                         </div>
 
                         {% if post.is_question %}
-                            <span class="badge bg-warning text-dark mb-2 fs-6">❓ Question</span>
+                            <div class="mb-3">
+                                <span class="badge bg-warning text-dark px-3 py-2 rounded-pill"><i class="fa-solid fa-circle-question me-1"></i> Question</span>
+                            </div>
+                        {% endif %}
+
+                        {% if post.content %}
+                        <p class="fs-6 mb-3" style="line-height: 1.6; white-space: pre-wrap;">{{ post.content }}</p>
                         {% endif %}
 
                         {% if post.tags.all %}
-                        <div class="mt-2">
+                        <div class="d-flex flex-wrap gap-2 mb-3">
                             {% for tag in post.tags.all %}
                                 <a href="{% url 'home' %}?tag={{ tag.name }}" class="post-tag">#{{ tag.name }}</a>
                             {% endfor %}
                         </div>
                         {% endif %}
 
-                        {% if post.content %}
-                        <p class="mt-3 mb-3 fs-6">{{ post.content }}</p>
-                        {% endif %}
-
                         {% if post.image %}
                         <div class="mb-3">
                             <img src="{{ post.image.url }}"
-                                 class="img-fluid rounded-4 w-100"
+                                 class="img-fluid rounded-4 w-100 border border-secondary border-opacity-25"
                                  alt="Post Image"
-                                 style="max-height: 500px; object-fit: cover;">
+                                 style="max-height: 600px; object-fit: cover;">
                         </div>
                         {% endif %}
 
                         {% if post.file_attachment %}
                         <div class="mb-3">
-                            <a href="{{ post.file_attachment.url }}" target="_blank" class="btn btn-sm btn-outline-info rounded-pill">
-                                📎 Download Attachment
+                            <a href="{{ post.file_attachment.url }}" target="_blank" class="btn btn-sm btn-unibuzz-outline rounded-pill text-info border-info">
+                                <i class="fa-solid fa-paperclip me-1"></i> Download Attachment
                             </a>
                         </div>
                         {% endif %}
 
-                        <div class="d-flex align-items-center gap-2 mb-3 flex-wrap">
-                            <form method="POST" action="{% url 'like_post' post.id %}">
+                        <!-- Action Buttons -->
+                        <div class="d-flex align-items-center gap-4 mt-4 pt-3 border-top border-secondary border-opacity-25">
+                            <form method="POST" action="{% url 'like_post' post.id %}" class="m-0 like-form">
                                 {% csrf_token %}
-                                <button type="submit" class="btn btn-unibuzz-outline rounded-pill px-3">
-                                    {% if request.user in post.likes.all %} ❤️ Liked {% else %} 🤍 Like {% endif %}
-                                    <span class="badge bg-dark ms-1">{{ post.total_likes }}</span>
+                                <button type="submit" class="btn p-0 text-muted d-flex align-items-center gap-2" style="background: none; border: none; transition: color 0.2s;">
+                                    {% if request.user in post.likes.all %}
+                                        <i class="fa-solid fa-heart text-danger fs-5"></i> <span class="text-danger fw-bold">{{ post.total_likes }}</span>
+                                    {% else %}
+                                        <i class="fa-regular fa-heart fs-5 hover-text-danger"></i> <span>{{ post.total_likes }}</span>
+                                    {% endif %}
                                 </button>
                             </form>
 
-                            <button class="btn btn-unibuzz-outline rounded-pill px-3"
-                                    data-bs-toggle="collapse"
-                                    data-bs-target="#commentBox{{ post.id }}">
-                                💬 Comment
-                                <span class="badge bg-secondary ms-1">{{ post.total_comments }}</span>
+                            <button class="btn p-0 text-muted d-flex align-items-center gap-2 hover-text-primary" style="background: none; border: none;" data-bs-toggle="collapse" data-bs-target="#commentBox{{ post.id }}">
+                                <i class="fa-regular fa-comment fs-5"></i> <span>{{ post.total_comments }}</span>
                             </button>
                         </div>
 
-                        <div class="collapse mb-3" id="commentBox{{ post.id }}">
-                            <form method="POST" action="{% url 'add_comment' post.id %}">
+                        <!-- Comments Section -->
+                        <div class="collapse mt-4" id="commentBox{{ post.id }}">
+                            <form method="POST" action="{% url 'add_comment' post.id %}" class="mb-4">
                                 {% csrf_token %}
                                 <div class="input-group">
-                                    <input type="text" name="content" class="form-control" placeholder="Write a comment..." required>
-                                    <button class="btn btn-dark">Post</button>
+                                    <input type="text" name="content" class="form-control rounded-start-pill border-secondary bg-transparent text-dark" placeholder="Post your reply..." required>
+                                    <button class="btn btn-unibuzz-primary rounded-end-pill px-4">Reply</button>
                                 </div>
                             </form>
-                        </div>
 
-                        {% for comment in post.comments.all %}
-                        <div class="rounded-3 px-3 py-2 mb-2 {% if comment.is_accepted_answer %}bg-success bg-opacity-10 border border-success{% else %}bg-light{% endif %}">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div>
-                                    <strong class="small">{{ comment.user.username }}</strong>
-
-                                    {% if comment.is_accepted_answer %}
-                                        <span class="badge bg-success ms-1">✅ Accepted Answer</span>
-                                    {% endif %}
-
-                                    {% if comment.user.is_superuser %}
-                                        <span class="badge bg-danger ms-1">Admin</span>
-                                    {% else %}
-                                        {% for group in comment.user.groups.all %}
-                                            {% if group.name == "Teacher" %}
-                                                <span class="badge bg-primary ms-1">Teacher</span>
-                                            {% elif group.name == "Staff" %}
-                                                <span class="badge bg-secondary ms-1">Staff</span>
-                                            {% elif group.name == "Student" %}
-                                                <span class="badge bg-success ms-1">Student</span>
+                            <div class="d-flex flex-column gap-3">
+                                {% for comment in post.comments.all %}
+                                <div class="p-3 rounded-4 {% if comment.is_accepted_answer %}border border-success bg-success bg-opacity-10{% else %}bg-secondary bg-opacity-10{% endif %}">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <div class="d-flex align-items-center gap-2">
+                                            <strong class="text-dark">{{ comment.user.username }}</strong>
+                                            {% if comment.is_accepted_answer %}
+                                                <span class="badge bg-success rounded-pill px-2 py-1"><i class="fa-solid fa-check me-1"></i> Accepted</span>
                                             {% endif %}
-                                        {% endfor %}
-                                    {% endif %}
+                                        </div>
+                                        <div class="text-muted small">
+                                            {{ comment.created_at|date:"M d, h:i A" }}
+                                        </div>
+                                    </div>
 
-                                    <div class="small mt-1">{{ comment.content }}</div>
+                                    <p class="mb-2 text-dark" style="font-size: 0.95rem;">{{ comment.content }}</p>
+
+                                    <div class="d-flex gap-3 mt-2">
+                                        {% if request.user == post.user and post.is_question and not comment.is_accepted_answer %}
+                                        <form method="POST" action="{% url 'accept_answer' comment.id %}">
+                                            {% csrf_token %}
+                                            <button class="btn btn-sm text-success p-0" style="background:none; border:none;"><i class="fa-solid fa-check-double me-1"></i> Accept</button>
+                                        </form>
+                                        {% endif %}
+
+                                        {% if request.user == comment.user or can_moderate %}
+                                        <form method="POST" action="{% url 'delete_comment' comment.id %}">
+                                            {% csrf_token %}
+                                            <button class="btn btn-sm text-danger p-0" style="background:none; border:none;"><i class="fa-regular fa-trash-can"></i> Delete</button>
+                                        </form>
+                                        {% endif %}
+                                    </div>
                                 </div>
-
-                                <div class="d-flex gap-2">
-                                    {% if request.user == post.user and post.is_question and not comment.is_accepted_answer %}
-                                    <form method="POST" action="{% url 'accept_answer' comment.id %}">
-                                        {% csrf_token %}
-                                        <button class="btn btn-sm btn-outline-success rounded-pill">✓ Accept</button>
-                                    </form>
-                                    {% endif %}
-
-                                    {% if request.user == comment.user or can_moderate %}
-                                    <form method="POST" action="{% url 'delete_comment' comment.id %}">
-                                        {% csrf_token %}
-                                        <button class="btn btn-sm btn-outline-danger rounded-pill">Delete</button>
-                                    </form>
-                                    {% endif %}
-                                </div>
-                            </div>
-
-                            <div class="text-muted small mt-1">
-                                {{ comment.created_at|date:"d M Y, h:i A" }}
+                                {% endfor %}
                             </div>
                         </div>
-                        {% endfor %}
 
                     </div>
                 </div>
 
+                <!-- Delete Post Modal -->
                 {% if request.user == post.user or can_moderate %}
-                <div class="modal fade" id="deleteModal{{ post.id }}">
+                <div class="modal fade" id="deleteModal{{ post.id }}" tabindex="-1" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content rounded-4 border-0">
-                            <div class="modal-header">
-                                <h5 class="fw-bold">Delete Post</h5>
-                                <button class="btn-close" data-bs-dismiss="modal"></button>
+                        <div class="modal-content rounded-4 border-secondary text-dark" style="background: var(--card-solid);">
+                            <div class="modal-header border-secondary border-opacity-25">
+                                <h5 class="modal-title fw-bold">Delete Post</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
-
-                            <div class="modal-body">
-                                Are you sure you want to delete this post?
+                            <div class="modal-body py-4 text-center">
+                                <i class="fa-solid fa-triangle-exclamation text-danger mb-3" style="font-size: 3rem;"></i>
+                                <p class="mb-0 fs-5">This can't be undone. Are you sure?</p>
                             </div>
-
-                            <div class="modal-footer">
-                                <button class="btn btn-outline-secondary rounded-pill" data-bs-dismiss="modal">
-                                    Cancel
-                                </button>
-
-                                <form method="POST" action="{% url 'delete_post' post.id %}">
+                            <div class="modal-footer border-secondary border-opacity-25 justify-content-center gap-3">
+                                <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">Cancel</button>
+                                <form method="POST" action="{% url 'delete_post' post.id %}" class="m-0">
                                     {% csrf_token %}
-                                    <button class="btn btn-danger rounded-pill">
-                                        Yes, Delete
-                                    </button>
+                                    <button type="submit" class="btn btn-danger rounded-pill px-4 fw-bold">Delete</button>
                                 </form>
                             </div>
                         </div>
@@ -254,83 +223,97 @@
 
                 {% endfor %}
             {% else %}
-                <div class="text-center mt-5">
-                    <h5>No posts yet</h5>
+                <div class="unibuzz-card text-center py-5">
+                    <i class="fa-solid fa-wind text-muted mb-3" style="font-size: 3rem;"></i>
+                    <h5 class="fw-bold">Nothing to see here</h5>
+                    <p class="text-muted">Follow people or join groups to fill your feed.</p>
                 </div>
             {% endif %}
 
         </div>
 
         <!-- RIGHT SIDEBAR -->
-        <div class="col-md-3 d-none d-md-block">
+        <div class="col-lg-4 col-xl-4 d-none d-lg-block">
 
-            <div class="card border-0 shadow-sm rounded-4 p-3 mb-3">
-                <h6 class="fw-bold">Welcome 👋</h6>
-                <p class="small mb-0">Logged in as <strong>{{ request.user.username }}</strong></p>
-
-                <div class="mt-2">
-                    {% if request.user.is_superuser %}
-                        <span class="badge bg-danger">Admin</span>
+            <!-- User Mini Profile Card -->
+            <div class="unibuzz-card p-3 mb-4 position-relative overflow-hidden">
+                <div style="position: absolute; top: -50px; right: -50px; width: 100px; height: 100px; background: var(--accent-primary); filter: blur(40px); opacity: 0.3;"></div>
+                
+                <div class="d-flex align-items-center gap-3 position-relative z-1">
+                    {% if request.user.profile.profile_image %}
+                        <img src="{{ request.user.profile.profile_image.url }}" class="rounded-circle border border-4 border-white shadow-sm mb-3" width="80" height="80" style="object-fit: cover;" onerror="this.outerHTML='<div class=\'rounded-circle border border-4 border-white shadow-sm mb-3 mx-auto bg-white d-flex align-items-center justify-content-center\' style=\'width: 80px; height: 80px;\'><i class=\'fa-solid fa-user text-muted fs-1\'></i></div>'">
                     {% else %}
-                        {% for group in request.user.groups.all %}
-                            {% if group.name == "Teacher" %}
-                                <span class="badge bg-primary">Teacher</span>
-                            {% elif group.name == "Staff" %}
-                                <span class="badge bg-secondary">Staff</span>
-                            {% elif group.name == "Student" %}
-                                <span class="badge bg-success">Student</span>
-                            {% endif %}
-                        {% endfor %}
+                        <i class="fa-solid fa-circle-user text-muted" style="font-size: 48px;"></i>
                     {% endif %}
+                    
+                    <div>
+                        <h6 class="fw-bold mb-0 text-dark">{{ request.user.username }}</h6>
+                        <div class="mt-1">
+                            {% if request.user.is_superuser %}
+                                <span class="role-badge badge-admin"><i class="fa-solid fa-crown me-1"></i> Admin</span>
+                            {% else %}
+                                {% for group in request.user.groups.all %}
+                                    {% if group.name == "Teacher" %}
+                                        <span class="role-badge badge-teacher"><i class="fa-solid fa-chalkboard-user me-1"></i> Teacher</span>
+                                    {% elif group.name == "Staff" %}
+                                        <span class="role-badge badge-admin">Staff</span>
+                                    {% elif group.name == "Student" %}
+                                        <span class="role-badge badge-student"><i class="fa-solid fa-user-graduate me-1"></i> Student</span>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div class="card border-0 shadow-sm rounded-4 p-3 mt-3">
-                <h6 class="fw-bold mb-3">🔥 People to Follow</h6>
+            <!-- Suggestions to Follow -->
+            <div class="unibuzz-card p-4 sticky-top" style="top: 80px;">
+                <h6 class="fw-bold mb-4 d-flex align-items-center gap-2">
+                    <i class="fa-solid fa-users text-primary"></i> Who to follow
+                </h6>
 
                 {% if suggested_users %}
+                    <div class="d-flex flex-column gap-3">
                     {% for user in suggested_users %}
-                    <div class="d-flex align-items-center justify-content-between mb-3">
-                        <div class="d-flex align-items-center gap-2">
-                            <img src="{{ user.profile.profile_image.url }}"
-                                 class="rounded-circle"
-                                 width="40"
-                                 height="40"
-                                 style="object-fit: cover;">
-
-                            <div>
-                                <div class="fw-semibold small">
-                                    <a href="{% url 'profile' user.username %}" class="text-decoration-none text-dark">
-                                        {{ user.username }}
-                                    </a>
-                                </div>
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div class="d-flex align-items-center gap-2">
+                                <a href="{% url 'profile' user.username %}">
+                                    {% if user.profile.profile_image %}
+                                        <img src="{{ user.profile.profile_image.url }}" class="rounded-circle" width="40" height="40" style="object-fit: cover;" onerror="this.outerHTML='<div class=\'rounded-circle bg-secondary bg-opacity-25 d-flex align-items-center justify-content-center\' style=\'width: 40px; height: 40px;\'><i class=\'fa-solid fa-user text-secondary\'></i></div>'">
+                                    {% else %}
+                                        <div class="rounded-circle bg-secondary bg-opacity-25 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                            <i class="fa-solid fa-user text-secondary"></i>
+                                        </div>
+                                    {% endif %}
+                                </a>
 
                                 <div>
-                                    {% if user.is_superuser %}
-                                        <span class="badge bg-danger small">Admin</span>
-                                    {% else %}
-                                        {% for group in user.groups.all %}
-                                            {% if group.name == "Teacher" %}
-                                                <span class="badge bg-primary small">📘 Teacher</span>
-                                            {% elif group.name == "Staff" %}
-                                                <span class="badge bg-secondary small">Staff</span>
-                                            {% elif group.name == "Student" %}
-                                                <span class="badge bg-success small">Student</span>
-                                            {% endif %}
-                                        {% endfor %}
-                                    {% endif %}
+                                    <div class="fw-bold" style="font-size: 0.9rem;">
+                                        <a href="{% url 'profile' user.username %}" class="text-decoration-none text-dark hover-text-primary">
+                                            {{ user.username }}
+                                        </a>
+                                    </div>
+                                    <div class="text-muted" style="font-size: 0.75rem;">
+                                        {% if user.groups.all %}
+                                            {{ user.groups.first.name }}
+                                        {% else %}
+                                            Member
+                                        {% endif %}
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <a href="{% url 'follow_unfollow' user.username %}"
-                           class="btn btn-sm btn-outline-primary rounded-pill px-3">
-                            Follow
-                        </a>
-                    </div>
+                            <a href="{% url 'follow_unfollow' user.username %}" class="btn btn-sm btn-light rounded-pill px-3 fw-bold text-dark follow-btn">
+                                Follow
+                            </a>
+                        </div>
                     {% endfor %}
+                    </div>
                 {% else %}
-                    <p class="text-muted small mb-0">No new suggestions right now.</p>
+                    <div class="text-center py-3">
+                        <p class="text-muted small mb-0">No suggestions right now.</p>
+                    </div>
                 {% endif %}
             </div>
 
@@ -338,5 +321,10 @@
 
     </div>
 </div>
+
+<style>
+    .hover-text-danger:hover { color: #f87171 !important; }
+    .hover-text-primary:hover { color: var(--accent-primary) !important; }
+</style>
 
 {% endblock %}

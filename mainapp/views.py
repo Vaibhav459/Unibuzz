@@ -23,10 +23,14 @@ def is_admin(user):
 
 
 def login_page(request):
+    if request.user.is_authenticated:
+        return redirect('home')
     return render(request, 'login.html')
 
 
 def register(request):
+    if request.user.is_authenticated:
+        return redirect('home')
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
         if form.is_valid():
@@ -44,6 +48,8 @@ def register(request):
 
 
 def student_login(request):
+    if request.user.is_authenticated:
+        return redirect('home')
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -63,6 +69,8 @@ def student_login(request):
 
 
 def teacher_login(request):
+    if request.user.is_authenticated:
+        return redirect('home')
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
