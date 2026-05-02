@@ -111,7 +111,10 @@
                 <a class="navbar-brand d-flex align-items-center gap-2" href="{% url 'home' %}" style="font-size: 1.4rem; font-weight: 800; color: var(--text-main);">
                     <i class="fa-solid fa-graduation-cap" style="color: var(--accent-primary);"></i> UniBuzz.
                 </a>
-                <a href="{% url 'search' %}" class="text-dark fs-5 nav-icon-btn"><i class="fa-solid fa-magnifying-glass"></i></a>
+                <div class="d-flex align-items-center gap-4">
+                    <a href="{% url 'inbox' %}" class="text-dark fs-5 nav-icon-btn"><i class="fa-regular fa-envelope"></i></a>
+                    <a href="{% url 'user_logout' %}" class="text-danger fs-5 nav-icon-btn"><i class="fa-solid fa-arrow-right-from-bracket"></i></a>
+                </div>
             </header>
 
             <div class="container-fluid py-4 px-lg-5" style="max-width: 1400px;">
@@ -142,7 +145,7 @@
                 <span class="mobile-nav-icon"><i class="fa-solid fa-magnifying-glass"></i></span>
             </a>
             <a href="{% url 'create_post' %}" class="mobile-nav-item {% if request.resolver_match.url_name == 'create_post' %}active{% endif %}">
-                <span class="mobile-nav-icon" style="background: var(--accent-gradient); color: white; border-radius: 50%; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(178, 143, 111, 0.3); transform: translateY(-10px);">
+                <span class="mobile-nav-icon" style="background: var(--accent-gradient); color: white; border-radius: 50%; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3); transform: translateY(-10px);">
                     <i class="fa-solid fa-plus"></i>
                 </span>
             </a>
